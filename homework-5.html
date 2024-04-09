@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+</head>
+<body>
+<h2>Номер страницы:</h2>
+<input type="number" id="page" placeholder="Введите номер страницы">
+<h2>Лимит:</h2>
+<input type="number" id="limit" placeholder="Введите лимит">
+<button id="button">Запрос</button>
+<div id="result"></div>
+
+<script>
+document.getElementById("button").addEventListener("click", function() {
+    const pageNum = document.getElementById("page").value;
+    const limitNum = document.getElementById("limit").value;
+    const resultDiv = document.getElementById("result");
+    
+    if (!isValidInput(pageNum) || !isValidInput(limitNum)) {
+        resultDiv.textContent = "Номер страницы и лимит должны быть числами от 1 до 10";
+        return;
+    }
+  
+    function isValidInput(input) {
+       const num = parseInt(input);
+       return !isNaN(num) && num >= 1 && num <= 10; }
+    
+    const url = `https://jsonplaceholder.typicode.com/photos?_page=${pageNum}&_limit=${limitNum}`;
+  
+    fetch(url)
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error('Ошибка');
+            }
+            return response.json();
+        })
+        .then(data => {
+            resultDiv.innerHTML = "";
+            data.forEach(function(photo) {
+                const img = document.createElement("img");
+                img.src = photo.thumbnailUrl;
+                resultDiv.appendChild(img);
+            });
+        })
+        .catch(error => {
+            resultDiv.textContent = error.message;
+        });
+});
+</script>
+
+</body>
+</html>
